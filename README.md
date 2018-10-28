@@ -317,7 +317,6 @@ python train_single_digit.py --digit 1 --trial 1
 ```
  
 ### Load trained models.
-
 ```python
 my_model = captcha_predictor()
 my_model.load_structure(STRUCTURE)
@@ -341,7 +340,7 @@ my_model.predict(data)
 ### Sample result
 ![sample](https://i.imgur.com/PjGa25o.jpg)
  
- Every accuracy for each digit above 99% and some have 100%. Acutally, I used validation set with only 2000 images(it was really really hard to label all the downloaded captcha images mannually.
+ Every accuracy for each digit above 99% and some have 100%. Acutally, I used validation set with only 2000 images. I wanted it to be more. But, it was really really hard to label all the downloaded captcha images mannually.
 
  And overall accuracy was above 99.5%. :-) I think this high accuracy is possible since the captcha images I used in this project were pretty clear-looking. Blurry images would result in lower accuracy, I guess.
 
