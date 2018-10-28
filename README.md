@@ -172,6 +172,11 @@ Non-trainable params: 960
 _________________________________________________________________
 ```
 
+
+### Usages
+
+ This is the code to train model for each digit.
+
  [train_single_digit.py]
 ```python
 import numpy as np
@@ -248,7 +253,7 @@ with open('captcha_digit' + str(NUM_digit) + ' _breaker[' + str(NUM_trial) + '].
 print('done!')
 ```
 
-### Usages
+ This is a command in console.
 
 ```python
 python train_single_digit.py --digit 1 --trial 1
