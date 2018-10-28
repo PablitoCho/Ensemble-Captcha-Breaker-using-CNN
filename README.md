@@ -13,7 +13,8 @@
 ## Model Architecture
 ### Visualization
 ![model](https://i.imgur.com/y1ASzGN.jpg)
-
+```python
+model.summary()
 _________________________________________________________________
 Layer (type)                 Output Shape              Param #   
 =================================================================
@@ -65,7 +66,7 @@ Total params: 619,370
 Trainable params: 618,410
 Non-trainable params: 960
 _________________________________________________________________
-
+```
 
 ## Usages
 
