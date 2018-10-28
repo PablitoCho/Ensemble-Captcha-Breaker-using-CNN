@@ -3,9 +3,7 @@
 
 ## Dataset Description
 ### Captcha Images used in training
-![captcha1](https://i.imgur.com/mKQCi0F.png| width=240) ![captcha2](https://i.imgur.com/V3nH1R6.png | width=240) ![captcha3](https://i.imgur.com/4uxqvPw.png| width=240)
-
-<img src="https://i.imgur.com/mKQCi0F.png" width="240" height="80" />
+<img src="https://i.imgur.com/mKQCi0F.png" width="240" height="80" /> <img src="https://i.imgur.com/V3nH1R6.png" width="240" height="80" /> <img src="https://i.imgur.com/4uxqvPw.png" width="240" height="80" />
 
 ### Labels in csv file
 ![label](https://i.imgur.com/YVSuZwL.jpg)
