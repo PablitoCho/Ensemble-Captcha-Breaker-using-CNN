@@ -31,38 +31,44 @@ import matplotlib.pyplot as plt
 img = np.array(Image.open('./data/train/1.jpg'))
 img.shape # (40, 120, 4) : (height, width, # of channels)
 ```
- First, see the original image
+ First, see the original image.
 ```python
  # original image
 imgplot = plt.imshow(img)
 plt.show()
 ```
-<img src="./data/train/1.jpg" width="240" height="80" /> 
+<img src="https://imgur.com/EGFq2z9" width="240" height="80" /> 
 
  Channel 1st
 ```python
 imgplot = plt.imshow(img[:,:,0])
 plt.show()
 ```
+<img src="https://imgur.com/U4ZbrhX" width="240" height="80" /> 
+
  Channel 2nd
 ```python
 imgplot = plt.imshow(img[:,:,1])
 plt.show()
 ```
- Channel 3rd
+<img src="https://imgur.com/90o8nEd" width="240" height="80" /> 
+Channel 3rd
 ```python
 imgplot = plt.imshow(img[:,:,2])
 plt.show()
 ```
+<img src="https://imgur.com/waknbL6" width="240" height="80" /> 
 
-
+ Actually, channels 1 to 3 have exactly same pixel values and based on what It looks, I guess they are all alpha channel for transparency.(I'm not that sure.)
+ And they don't have proper digit information as you can see.
 
  Channel 4th
 ```python
 imgplot = plt.imshow(img[:,:,3])
 plt.show()
 ```
-
+<img src="https://imgur.com/zSSszHa" width="240" height="80" /> 
+ 4th channel is what we have been looking forward to. I will use only this 4th channel, therefore, the images are put in the model as 1-channel ones.
 
 ## Model Architecture
 ### Visualization
