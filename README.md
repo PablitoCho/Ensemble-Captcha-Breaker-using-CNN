@@ -267,14 +267,78 @@ python train_single_digit.py --digit 1 --trial 1
 
  After all, with 6 hdf results and json file. I wrote a simple class combining 6 models and predicting overall 6 digit string.
  
- ```python
- ddd
- ```
+```python
+ class captcha_predictor:
+    def __init__(self):
+        self.structure = None
+        self.weights = []
+        self.models = []
+        
+    def load_structure(self, str_json):
+        # needs 6 models each for each digit
+        for i in range(6):
+            with open(str_json, 'r') as f:
+                self.models.append(model_from_json(f.read()))
+            f.close()
+        print('Model structure is loaded.')
+        
+    def show_structure(self):
+        try:
+            print(self.models[0].summary())
+        except:
+            print('Model structure has not been loaded yet.')
+            
+    # turn generated jpg file into 4-dim'l numpy array to put it in model
+    def preprocess_img(self, img, channel=3):
+        data = (np.array(Image.open(img))/255.0)[:,:,channel]
+        return data[np.newaxis, :, :, np.newaxis]
+    
+    def load_weights(self, weights):
+        self.models[0].load_weights(weights[0])
+        self.models[1].load_weights(weights[1])
+        self.models[2].load_weights(weights[2])
+        self.models[3].load_weights(weights[3])
+        self.models[4].load_weights(weights[4])
+        self.models[5].load_weights(weights[5])
+        print('Pre-trained weights are loaded.')
+    
+    def single_predictor(self, digit):
+        return self.models[digit-1]
+    
+    def predict(self, data):
+        #data = self.preprocess_img(img=img, channel=3)
+        digit1 = np.argmax(self.single_predictor(digit=1).predict(data))
+        digit2 = np.argmax(self.single_predictor(digit=2).predict(data))
+        digit3 = np.argmax(self.single_predictor(digit=3).predict(data))
+        digit4 = np.argmax(self.single_predictor(digit=4).predict(data))
+        digit5 = np.argmax(self.single_predictor(digit=5).predict(data))
+        digit6 = np.argmax(self.single_predictor(digit=6).predict(data))
+        return str(digit1) + str(digit2) + str(digit3) + str(digit4) + str(digit5) + str(digit6)
+```
  
+### Load trained models.
 
+```python
+my_model = captcha_predictor()
+my_model.load_structure(STRUCTURE)
+#my_model.show_structure()
+my_model.load_weights(WEIGHTS)
+```
+
+### Predict new image
+```python
+test_img = './test.jpg'
+get_captcha(test_img)
+data = preprocess_img(img_name=test_img, channel=3)
+my_model.predict(data)
+``` 
+
+### Sample result
+![sample](https://i.imgur.com/PjGa25o.jpg)
+ 
  Every accuracy for each digit above 99% and some have 100%. Acutally, I used validation set with only 2000 images(it was really really hard to label all the downloaded captcha images mannually.
 
- And overall accuracy was above 99.5%.
+ And overall accuracy was above 99.5%. :-) I think this high accuracy is possible since the captcha images I used in this project were pretty clear-looking. Blurry images would result in lower accuracy, I guess.
 
 ## References
 https://github.com/JackonYang/captcha-tensorflow
