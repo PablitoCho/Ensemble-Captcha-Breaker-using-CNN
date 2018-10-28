@@ -37,27 +37,27 @@ img.shape # (40, 120, 4) : (height, width, # of channels)
 imgplot = plt.imshow(img)
 plt.show()
 ```
-<img src="https://imgur.com/EGFq2z9" width="240" height="80" /> 
+<img src="https://i.imgur.com/EGFq2z9.png" width="240" height="80" /> 
 
  Channel 1st
 ```python
 imgplot = plt.imshow(img[:,:,0])
 plt.show()
 ```
-<img src="https://imgur.com/U4ZbrhX" width="240" height="80" /> 
+<img src="https://i.imgur.com/U4ZbrhX.png" width="240" height="80" /> 
 
  Channel 2nd
 ```python
 imgplot = plt.imshow(img[:,:,1])
 plt.show()
 ```
-<img src="https://imgur.com/90o8nEd" width="240" height="80" /> 
+<img src="https://i.imgur.com/90o8nEd.png" width="240" height="80" /> 
 Channel 3rd
 ```python
 imgplot = plt.imshow(img[:,:,2])
 plt.show()
 ```
-<img src="https://imgur.com/waknbL6" width="240" height="80" /> 
+<img src="https://i.imgur.com/waknbL6.png" width="240" height="80" /> 
 
  Actually, channels 1 to 3 have exactly same pixel values and based on what It looks, I guess they are all alpha channel for transparency.(I'm not that sure.)
  And they don't have proper digit information as you can see.
