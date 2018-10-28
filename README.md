@@ -265,7 +265,7 @@ python train_single_digit.py --digit 1 --trial 1
 
 ## Results
 
- After all, with 6 hdf results and json file. I wrote a simple class combining 6 models and predicting overall 6 digit string.
+ After all. With 6 hdf results and json file, I wrote a simple class combining 6 models and predicting overall 6 digit string.
  
 ```python
  class captcha_predictor:
@@ -327,6 +327,11 @@ my_model.load_weights(WEIGHTS)
 
 ### Predict new image
 ```python
+# turn generated jpg file into 4-dim'l numpy array to put it in model
+def preprocess_img(img_name, channel=3):
+    data = (np.array(Image.open(img_name))/255.0)[:,:,channel]
+    return data[np.newaxis, :, :, np.newaxis]
+
 test_img = './test.jpg'
 get_captcha(test_img)
 data = preprocess_img(img_name=test_img, channel=3)
