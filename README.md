@@ -108,7 +108,7 @@ val_data = val_data[:,:,:,np.newaxis]
  ```
 
 ## Model Architecture
- I refered to the wonderful work from [https://github.com/JasonLiTW/simple-railway-captcha-solver]. Of course, I modified a littie the original model architecture being fitted in my problem. But after couple of times training it, I found my model did not go well. Each single digit accuracy was 90%+, but combining all 6 accuracy just around 70%. In the original work, one model predicted all 6 digits and the training went based on 6th digit accuracy. And I took notice that 6th digit accuracy was almost 100% but others are around 90% more or less.
+ I refered to the wonderful work from [https://github.com/JasonLiTW/simple-railway-captcha-solver]. Of course, I modified a littie the original model architecture being fitted in my problem. But after couples of trial training it, I found my model did not go well. Each single digit accuracy was 90%+, but combining all 6 accuracy just around 70%. In the original work, one model predicted all 6 digits and the training went based on 6th digit accuracy. And I took notice that 6th digit accuracy was almost 100% but others are around 90% more or less.
  
  And I thought that if I trained 6 models for 6 digits seperately and combined them together like ensemble model. The final accuracy would increase significantly. And this idea is the key point over my job here.
 
