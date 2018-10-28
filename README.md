@@ -12,6 +12,13 @@
 |Keras|2.2.0|
 |Pillow|5.1.0|
 
+### Codes Description
+|Name|Description|
+|----|----|
+|img_preprocess.py| Turn jpg files into proper numpy array. |
+|train_single_digit.py| Train each model for each digit. |
+|ensemble_predictor.ipynb| Final ensemble model and Test it. |
+
 ## Dataset Description
 ### Captcha Images used in training
 <img src="https://i.imgur.com/mKQCi0F.png" width="240" height="80" /> <img src="https://i.imgur.com/V3nH1R6.png" width="240" height="80" /> <img src="https://i.imgur.com/4uxqvPw.png" width="240" height="80" />
@@ -95,13 +102,18 @@ for digit in range(6): # 6 is the number of digit in captcha
 train_data = np.stack([(np.array(Image.open('./data/train/' + str(i) + ".jpg"))/255.0)[:,:,3] for i in range(1, NUM_TRAIN+1)])
 train_data = train_data[:,:,:,np.newaxis]
 # shape of train_data : (NUM_TRAIN, 40, 120, 1) - (# of data, height of img, width of img, channel).
-# We can just use 4th one only. I guess...
 val_data = np.stack([(np.array(Image.open('./data/val/' + str(i) + ".jpg"))/255.0)[:,:,3] for i in range(1, NUM_VAL+1)])
 val_data = val_data[:,:,:,np.newaxis]
 # shape of val_data : (NUM_VAL, 40, 120, 1) 
  ```
 
 ## Model Architecture
+ I used wonderful work from [https://github.com/JasonLiTW/simple-railway-captcha-solver], of course modified a littie the original model architecture. But after couple of times training it, I found my model did not go well. Each single digit accuracy was 90%+, but combining all 6 accuracy just around 70%. From the original work, one model predicted all 6 digits and the training went based on 6th digit accuracy. And I took notice that 6th digit accuracy was almost 100% but others are around 90% more or less.
+ 
+ And I thought that if I trained 6 models for 6 digits seperately and combined them together like ensemble model. The final accuracy would increase significantly. And this idea is the key point over my job here.
+
+ Each model looks like below.
+
 ### Visualization
 ![model](https://i.imgur.com/y1ASzGN.jpg)
 ### Details
@@ -160,19 +172,99 @@ Non-trainable params: 960
 _________________________________________________________________
 ```
 
-## Usages
-### Codes Description
-|Name|Description|
-|----|----|
-|img_preprocess.py| Turn jpg files into proper numpy array. |
-|train_single_digit.py| Train each model for each digit. |
-|ensemble_predictor.ipynb| Final ensemble model and Test it. |
+ [train_single_digit.py]
+```python
+import numpy as np
+from keras.models import Model
+from keras.layers import Input, Dense, Dropout, Flatten, Conv2D, MaxPooling2D, BatchNormalization
+from keras.callbacks import EarlyStopping, ModelCheckpoint
+from keras import backend as K
+K.set_image_dim_ordering('tf')
+from img_preprocess import train_data, val_data, train_label, val_label, LETTERSTR
+import argparse
+
+ap = argparse.ArgumentParser()
+ap.add_argument("--digit", required=True, help="the index of digit in captcha image to predict. From 1 to 6.")
+ap.add_argument("--trial", required=False, default=1, help="trial number. change when the model is tuned and modified.")
+args = vars(ap.parse_args())
+
+NUM_digit = int(args['digit'])
+NUM_trial = int(args['trial'])
+
+outnode = 'digit' + str(NUM_digit)
+
+train_label_single_digit = train_label[NUM_digit-1]
+val_label_single_digit = val_label[NUM_digit-1]
+
+#def model(input_shape, num_targets, num_digits, layers, dropout):
+def model(input_shape, layers, dropout):
+    in_ = Input(input_shape)
+    out = in_
+    
+    out = Conv2D(filters=layers[0], kernel_size=(3, 3), padding='same', activation='relu')(out)
+    out = Conv2D(filters=layers[0], kernel_size=(3, 3), padding='same', activation='relu')(out)
+    out = BatchNormalization()(out)
+    out = MaxPooling2D(pool_size=(2, 2))(out)
+    out = Dropout(dropout)(out)
+    
+    out = Conv2D(filters=layers[1], kernel_size=(3, 3), padding='same', activation='relu')(out)
+    out = Conv2D(filters=layers[1], kernel_size=(3, 3), padding='same', activation='relu')(out)
+    out = BatchNormalization()(out)
+    out = MaxPooling2D(pool_size=(2, 2))(out)
+    out = Dropout(dropout)(out)
+    
+    out = Conv2D(filters=layers[2], kernel_size=(3, 3), padding='same', activation='relu')(out)
+    out = Conv2D(filters=layers[2], kernel_size=(3, 3), padding='same', activation='relu')(out)
+    out = BatchNormalization()(out)
+    out = MaxPooling2D(pool_size=(2, 2))(out)
+    out = Dropout(dropout)(out)
+    
+    out = Conv2D(filters=layers[3], kernel_size=(3, 3), padding='same', activation='relu')(out)
+    out = BatchNormalization()(out)
+    out = MaxPooling2D(pool_size=(2, 2))(out)
+    
+    out = Flatten()(out)
+    out = Dropout(dropout)(out)
+    #out = [Dense(num_targets, name='digit' + str(i+1), activation='softmax')(out) for i in range(num_digits)]
+    out = Dense(10, name=outnode, activation='softmax')(out)
+    model = Model(inputs=in_, outputs=out)
+    model.compile(loss='categorical_crossentropy', optimizer='Adam', metrics=['accuracy'])
+    return model
+	
+#captcha_breaker = model(input_shape=train_data.shape[1:], num_targets=10,  num_digits=6, layers=[32, 64, 128, 256], dropout=0.3)
+captcha_breaker = model(input_shape=train_data.shape[1:], layers=[32, 64, 128, 256], dropout=0.3)
+
+#captcha_breaker.summary()
+# for advanced and easy-to-reproduce process
+filepath="digit" + str(NUM_digit) + "_weights[" + str(NUM_trial) + "].h5"
+checkpoint = ModelCheckpoint(filepath, monitor='val_acc', verbose=1, save_best_only=True, mode='max')
+earlystop = EarlyStopping(monitor = 'val_acc', patience=5, verbose=1, mode='auto')
+callbacks_list = [checkpoint, earlystop]
+captcha_breaker.fit(train_data, train_label_single_digit, batch_size=100, epochs=100, verbose=2, validation_data=(val_data, val_label_single_digit), callbacks=callbacks_list)
+# save the model architecture
+with open('captcha_digit' + str(NUM_digit) + ' _breaker[' + str(NUM_trial) + '].json', 'w') as f:
+    f.write(captcha_breaker.to_json())
+
+print('done!')
+```
+
+### Usages
+
+```python
+python train_single_digit.py --digit 1 --trial 1
+```
+
+ Above command means that training model for 1st digit with 1st trial. Trial number has its default as 1. When you change the model architecture significantly, adjust the number.
+ 
+ As results, after long training... `digit1_weight[1].h5` file for weight values and `captcha_digit1_breaker[1].json` file for model structure would be generated. We need 6 hdf files since there are 6 digits in our target captcha images.
 
 ## Results
 
+ Every accuracy for each digit above 99% and some have 100%. Acutally, I used validation set with only 2000 images(it was really really hard to label all the downloaded captcha images mannually.
 
+ And overall accuracy was above 99.5%.
 
 ## References
 https://github.com/JackonYang/captcha-tensorflow
 
-https://github.com/JasonLiTW/simple-railway-captcha-solver#english-version
+https://github.com/JasonLiTW/simple-railway-captcha-solver
