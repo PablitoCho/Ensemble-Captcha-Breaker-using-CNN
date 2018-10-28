@@ -8,7 +8,7 @@
 ### Labels in csv file
 ![label](https://i.imgur.com/YVSuZwL.jpg)
 
-## Dats Preprocessing
+## Data Preprocessing
 
 ## Model Architecture
 ![model](https://i.imgur.com/y1ASzGN.jpg)
