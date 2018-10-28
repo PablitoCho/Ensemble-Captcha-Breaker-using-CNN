@@ -47,14 +47,18 @@ plt.show()
 <img src="https://i.imgur.com/U4ZbrhX.png" width="240" height="80" /> 
 
  Channel 2nd
+ 
 <img src="https://i.imgur.com/90o8nEd.png" width="240" height="80" /> 
+
 Channel 3rd
+
 <img src="https://i.imgur.com/waknbL6.png" width="240" height="80" /> 
 
  Actually, channels 1 to 3 have exactly same pixel values and based on what It looks, I guess they are all alpha channel for transparency.(I'm not that sure.)
  And they don't have proper digit information as you can see.
 
  Channel 4th
+ 
 <img src="https://i.imgur.com/zSSszHa.png" width="240" height="80" /> 
 
  4th channel is what we have been looking forward to. I will use only this 4th channel, therefore, the images are put in the model as 1-channel ones.
