@@ -13,6 +13,7 @@
 ## Model Architecture
 ### Visualization
 ![model](https://i.imgur.com/y1ASzGN.jpg)
+### Details
 ```python
 model.summary()
 _________________________________________________________________
