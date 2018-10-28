@@ -1,6 +1,17 @@
 # Ensemble-Captcha-Breaker-using-CNN
 6 digit captcha breaker using convolutional neural network. The final accuracy is 99%+ 
 
+### Dependencies
+|Name|Version|
+|----|----|
+|numpy|1.14.3|
+|pandas|0.23.0|
+|matplotlib|2.2.2|
+|h5py|2.7.1|
+|tensorflow|1.8.0|
+|Keras|2.2.0|
+|Pillow|5.1.0|
+
 ## Dataset Description
 ### Captcha Images used in training
 <img src="https://i.imgur.com/mKQCi0F.png" width="240" height="80" /> <img src="https://i.imgur.com/V3nH1R6.png" width="240" height="80" /> <img src="https://i.imgur.com/4uxqvPw.png" width="240" height="80" />
@@ -9,6 +20,49 @@
 ![label](https://i.imgur.com/YVSuZwL.jpg)
 
 ## Data Preprocessing
+### EDA
+ Given captcha images have 4 channels since it's RGBA. But as you can see above images, it looks monochrome ones, or at least colors do not matter obviously. So eliminating redundant channels has to be done before training so that we can save learning time.
+ 
+ To do so, I needed to plot each channel and examine it with my own eyes.
+```python
+from PIL import Image
+import numpy as np
+import matplotlib.pyplot as plt
+img = np.array(Image.open('./data/train/1.jpg'))
+img.shape # (40, 120, 4) : (height, width, # of channels)
+```
+ First, see the original image
+```python
+ # original image
+imgplot = plt.imshow(img)
+plt.show()
+```
+<img src="./data/train/1.jpg" width="240" height="80" /> 
+
+ Channel 1st
+```python
+imgplot = plt.imshow(img[:,:,0])
+plt.show()
+```
+ Channel 2nd
+```python
+imgplot = plt.imshow(img[:,:,1])
+plt.show()
+```
+ Channel 3rd
+```python
+imgplot = plt.imshow(img[:,:,2])
+plt.show()
+```
+
+
+
+ Channel 4th
+```python
+imgplot = plt.imshow(img[:,:,3])
+plt.show()
+```
+
 
 ## Model Architecture
 ### Visualization
@@ -70,18 +124,6 @@ _________________________________________________________________
 ```
 
 ## Usages
-
-### Dependencies
-|Name|Version|
-|----|----|
-|numpy|1.14.3|
-|pandas|0.23.0|
-|matplotlib|2.2.2|
-|h5py|2.7.1|
-|tensorflow|1.8.0|
-|Keras|2.2.0|
-|Pillow|5.1.0|
-
 ### Codes Description
 |Name|Description|
 |----|----|
